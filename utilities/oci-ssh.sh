@@ -107,7 +107,7 @@ ssh_command=$(echo "$session_data" |\
     jq '.data."ssh-metadata".command' -r\
 )
 ssh_command="${ssh_command//<privateKey>/$key_name}"
-eval "$ssh_command"
+eval "$ssh_command" || true
 
 printf "SSH session ended\n"
 
