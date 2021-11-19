@@ -68,9 +68,32 @@ then
     exit 1
 fi
 
+key_name="$HOME/.oci/bastion-keys/bk-$RANDOM"
+
+cleanup(){
+    printf "Cleaning up keys\n"
+    rm "$key_name"
+    rm "$key_name.pub"
+    printf "\tDone cleaning up keys\n"
+
+    printf "Shutting down bastion session\n"
+    session_resp=$(oci bastion session delete \
+        --config-file "$HOME/.oci/config"\
+        --profile "token-oci-profile"\
+        --auth security_token\
+        --session-id "$session_id"\
+        --wait-for-state "ACCEPTED"\
+        --wait-for-state "FAILED"\
+        --wait-interval-seconds 5\
+        --force \
+    )
+    printf "\tDone shutting down bastion session\n"
+}
+
+trap cleanup EXIT
+
 printf "Generating new ssh-keys\n"
 mkdir -p "$HOME/.oci/bastion-keys"
-key_name="$HOME/.oci/bastion-keys/bk-$RANDOM"
 ssh-keygen -f "$key_name" -N "" -q
 printf "\tGenerated ssh-keys\n"
 
@@ -111,21 +134,4 @@ eval "$ssh_command" || true
 
 printf "SSH session ended\n"
 
-printf "Cleaning up keys\n"
-rm "$key_name"
-rm "$key_name.pub"
-printf "\tDone cleaning up keys\n"
-
-printf "Shutting down bastion session\n"
-session_resp=$(oci bastion session delete \
-    --config-file "$HOME/.oci/config"\
-    --profile "token-oci-profile"\
-    --auth security_token\
-    --session-id "$session_id"\
-    --wait-for-state "ACCEPTED"\
-    --wait-for-state "FAILED"\
-    --wait-interval-seconds 5\
-    --force \
-)
-printf "\tDone shutting down bastion session\n"
 exit 0

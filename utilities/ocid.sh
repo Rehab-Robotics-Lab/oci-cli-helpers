@@ -15,8 +15,9 @@ instance() {
         --profile "token-oci-profile"\
         --auth security_token\
         --compartment-id "$OCI_WORKING_COMPARTMENT"\
-        --all | \
-        jq  ".data | .[] | select(.\"display-name\" | contains(\"$1\")) | .id" -r
+        --all \
+        --query "data[? \"lifecycle-state\" == \`\"RUNNING\"\`] | [? contains(\"display-name\", '$1') ] | [0].id" \
+        --raw-output
 }
 
 # get ocid of bastion id using a search term on the display-name

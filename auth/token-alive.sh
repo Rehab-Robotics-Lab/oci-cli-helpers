@@ -9,6 +9,6 @@ set -o pipefail
 oci session authenticate --region us-ashburn-1 --tenancy-name 'upennrehabrobotics' --profile-name 'token-oci-profile'
 while :
 do
-    sleep $((  60*30  )) # 60 sec * 30 minutes
+    sleep $((  60*55  )) # 60 sec * 55 minutes
     oci session refresh --profile 'token-oci-profile'
 done
