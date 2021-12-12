@@ -11,9 +11,6 @@ set -o pipefail
 # get ocid of compute instance ids using a search term on the display-name
 instance() {
     oci compute instance list \
-        --config-file "$HOME/.oci/config"\
-        --profile "token-oci-profile"\
-        --auth security_token\
         --compartment-id "$OCI_WORKING_COMPARTMENT"\
         --all \
         --query "data[? \"lifecycle-state\" == \`\"RUNNING\"\`] | [? contains(\"display-name\", '$1') ] | [0].id" \
@@ -23,9 +20,6 @@ instance() {
 # get ocid of bastion id using a search term on the display-name
 bastion() {
     oci bastion bastion list \
-        --config-file "$HOME/.oci/config"\
-        --profile "token-oci-profile"\
-        --auth security_token\
         --compartment-id "$OCI_WORKING_COMPARTMENT"\
         --all | \
         jq  ".data | .[] | select(.\"name\" | contains(\"$1\")) | .id" -r

@@ -7,6 +7,17 @@ set -o pipefail
 
 
 oci session authenticate --region us-ashburn-1 --tenancy-name 'upennrehabrobotics' --profile-name 'token-oci-profile'
+
+# don't want any expansion in here, just escaping quotes
+# shellcheck disable=SC2016
+echo '
+
+Authentication done. To use token with oci-cli commands, export the following into your shell:
+export OCI_CLI_PROFILE='"'"'token-oci-profile'"'"'
+export OCI_CLI_CONFIG_FILE="$HOME/.oci/config"
+export OCI_CLI_AUTH='"'"'security_token'"'"'
+'
+
 while :
 do
     sleep $((  60*55  )) # 60 sec * 55 minutes

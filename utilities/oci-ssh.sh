@@ -6,9 +6,6 @@ instance_id=$1
 
 instance_info=$(
     oci compute instance get \
-        --config-file "$HOME/.oci/config"\
-        --profile "token-oci-profile"\
-        --auth security_token\
         --instance-id "$instance_id"
 )
 instance_name=$(echo "$instance_info" | jq '.data."display-name"')
@@ -24,9 +21,6 @@ fi
 
 plugin_info=$(
     oci instance-agent plugin list\
-        --config-file "$HOME/.oci/config"\
-        --profile "token-oci-profile"\
-        --auth security_token\
         --compartment-id "$instance_compartment"\
         --instanceagent-id "$instance_id"\
         --all
@@ -41,17 +35,11 @@ fi
 
 subnets=$(
     oci compute instance list-vnics \
-        --config-file "$HOME/.oci/config"\
-        --profile "token-oci-profile"\
-        --auth security_token\
         --instance-id "$instance_id"
 )
 
 bastions=$(
     oci bastion bastion list \
-        --config-file "$HOME/.oci/config"\
-        --profile "token-oci-profile"\
-        --auth security_token\
         --compartment-id "$instance_compartment"\
         --all
 )
@@ -78,9 +66,6 @@ cleanup(){
 
     printf "Shutting down bastion session\n"
     session_resp=$(oci bastion session delete \
-        --config-file "$HOME/.oci/config"\
-        --profile "token-oci-profile"\
-        --auth security_token\
         --session-id "$session_id"\
         --wait-for-state "ACCEPTED"\
         --wait-for-state "FAILED"\
@@ -99,9 +84,6 @@ printf "\tGenerated ssh-keys\n"
 
 printf "Starting new bastion session\n"
 session_resp=$(oci bastion session create-managed-ssh \
-    --config-file "$HOME/.oci/config"\
-    --profile "token-oci-profile"\
-    --auth security_token\
     --bastion-id "$bastion_id" \
     --target-resource-id "$instance_id"\
     --ssh-public-key-file "$key_name.pub"\
