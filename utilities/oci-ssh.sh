@@ -56,6 +56,8 @@ then
     exit 1
 fi
 
+echo "Found bastion: $bastion_id"
+
 key_name="$HOME/.oci/bastion-keys/bk-$RANDOM"
 
 cleanup(){
